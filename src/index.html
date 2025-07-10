@@ -29,12 +29,18 @@
         </div>
     </div>
 
-    <!-- Menu lateral -->
-    <div class="sidebar">
-        <h4 class="text-white">Menu</h4>
-        <a href="#" onclick="loadContent('home', 'home')" data-i18n="menuHome">Home</a>
-        <a href="#" onclick="loadContent('food', 'food-list')" data-i18n="menuFood">Food</a>
-    </div>
+    <aside id="sidebar">
+        <!-- Seu menu lateral aqui -->
+       <!-- Menu lateral -->
+        <div class="sidebar">
+            <h4 class="text-white">Menu</h4>
+            <a href="#" onclick="loadContent('home', 'home')" data-i18n="menuHome">Home</a>
+            <a href="#" onclick="loadContent('food', 'food-list')" data-i18n="menuFood">Food</a>
+            <button data-i18n="menuExit" onclick="logout()">Exit</button>
+        </div>
+    </aside>
+
+
 
     <!-- Conteúdo principal -->
     <div class="content" id="main-content">

@@ -1,8 +1,19 @@
-function loadContent(model, page) {
+function isAuthenticated() {
+    const user = JSON.parse(localStorage.getItem("mealtracker:user") || "{}");
+    return user.expiration && new Date(user.expiration) > new Date();
+}
 
+function loadContent(model, page) {
     const content = document.getElementById('main-content');
-    
     const route = `pages/${model}/${page}.html`;
+
+    // 🔐 Proteção de rotas: se não estiver logado, redireciona para login
+    if (!isAuthenticated() && !(model === 'auth' && page === 'login')) {
+        return loadContent('auth', 'login');
+    }
+
+    // ✅ Mostra ou oculta o menu lateral dinamicamente
+    showSidebar(isAuthenticated());
 
     fetch(route)
         .then(response => {
@@ -15,7 +26,7 @@ function loadContent(model, page) {
             // Carrega JS específico
             const scriptPath = `assets/js/${model}/${page}.js`;
 
-            // ✅ Remove script anterior se já estiver carregado
+            // ✅ Remove script anterior
             document.querySelectorAll(`script[src="${scriptPath}"]`).forEach(s => s.remove());
 
             const script = document.createElement('script');
@@ -81,4 +92,26 @@ function setLanguage(lang) {
 
     const btn = document.getElementById("languageDropdown");
     btn.innerHTML = `<img src="assets/img/flags/${langMap[lang].flag}" width="20"> ${langMap[lang].label}`;
+}
+
+window.addEventListener("load", () => {
+    const hash = window.location.hash.replace("#", "");
+    const [model, page] = hash.split("/");
+    loadContent(model || 'auth', page || 'login'); // abre login por padrão
+});
+
+window.addEventListener("hashchange", () => {
+    const [model, page] = window.location.hash.replace("#", "").split("/");
+    loadContent(model, page);
+});
+
+function logout() {
+    localStorage.removeItem("mealtracker:user");
+    window.location.hash = "auth/login";
+}
+
+function showSidebar(show) {
+    const sidebar = document.getElementById("sidebar");
+    if (!sidebar) return;
+    sidebar.style.display = show ? "block" : "none";
 }
