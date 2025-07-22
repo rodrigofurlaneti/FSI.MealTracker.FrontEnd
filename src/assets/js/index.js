@@ -1,84 +1,53 @@
-function loadContent(model, page) {
+  const form = document.getElementById('loginForm');
+  const message = document.getElementById('message');
 
-    const content = document.getElementById('main-content');
-    
-    const route = `pages/${model}/${page}.html`;
+  form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      message.style.color = 'black';
+      message.textContent = 'Verificando...';
 
-    fetch(route)
-        .then(response => {
-            if (!response.ok) throw new Error('Página não encontrada');
-            return response.text();
-        })
-        .then(html => {
-            content.innerHTML = html;
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value;
 
-            // Carrega JS específico
-            const scriptPath = `assets/js/${model}/${page}.js`;
+      const payload = { username, password };
 
-            // ✅ Remove script anterior se já estiver carregado
-            document.querySelectorAll(`script[src="${scriptPath}"]`).forEach(s => s.remove());
-
-            const script = document.createElement('script');
-            script.src = scriptPath;
-            script.onload = () => handlePageLoad(model, page);
-            script.onerror = () => {
-                content.innerHTML = `<h2>Erro</h2><p>Script ${scriptPath} não encontrado.</p>`;
-            };
-            document.body.appendChild(script);
-
-            window.location.hash = `${model}/${page}`;
-        })
-        .catch(error => {
-            content.innerHTML = `<h2>Erro</h2><p>${error.message}</p>`;
+      try {
+        const response = await fetch(`https://localhost:7123/api/authentications/async`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': '*/*'
+          },
+          body: JSON.stringify(payload)
         });
-}
 
-function handlePageLoad(model, page) {
-    switch (`${model}/${page}`) {
-        case 'food/food-list':
-            loadFoods(); // Essa função deve estar no arquivo JS da página
-            break;
-        case 'food/food-insert':
-            setupFoodForm();
-            break;
-        case 'food/food-update':
-            loadFoodDataToForm();
-            setupFoodEditSubmit();
-            break;
-        default:
-            console.warn(`No action defined for ${model}/${page}`);
-            break;
-    }
-}
+        const data = await response.json();
 
-function switchLanguage() {
-    const lang = document.getElementById("language-select").value;
-    const elements = document.querySelectorAll("[data-i18n]");
+        if (response.ok) {
+          localStorage.setItem('user', JSON.stringify(data));
+          message.style.color = 'green';
+          message.textContent = 'Login realizado com sucesso!';
 
-    elements.forEach(el => {
-        const key = el.getAttribute("data-i18n");
-        if (translations[lang] && translations[lang][key]) {
-            el.textContent = translations[lang][key];
+          setTimeout(() => {
+            window.location.href = 'home.html'; // Altere para sua próxima página
+          }, 1000);
+        } else {
+          message.style.color = 'red';
+          message.textContent = data.errorMessage || 'Erro ao autenticar.';
         }
-    });
-}
-
-function setLanguage(lang) {
-    const elements = document.querySelectorAll("[data-i18n]");
-    elements.forEach(el => {
-        const key = el.getAttribute("data-i18n");
-        if (translations[lang] && translations[lang][key]) {
-            el.textContent = translations[lang][key];
-        }
+      } catch (err) {
+        console.error(err);
+        message.style.color = 'red';
+        message.textContent = 'Erro ao conectar com o servidor.';
+      }
     });
 
-    // Atualiza o botão para mostrar o idioma atual
-    const langMap = {
-        en: { label: "English", flag: "en.png" },
-        es: { label: "Español", flag: "es.png" },
-        pt: { label: "Português", flag: "pt.png" }
-    };
+    // Alternar visibilidade da senha
+    const togglePassword = document.getElementById('togglePassword');
+    const passwordInput = document.getElementById('password');
 
-    const btn = document.getElementById("languageDropdown");
-    btn.innerHTML = `<img src="assets/img/flags/${langMap[lang].flag}" width="20"> ${langMap[lang].label}`;
-}
+    togglePassword.addEventListener('click', () => {
+      const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+      passwordInput.setAttribute('type', type);
+      togglePassword.textContent = type === 'password' ? '👁️' : '🙈';
+    });

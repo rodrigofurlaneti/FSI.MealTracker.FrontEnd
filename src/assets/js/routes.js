@@ -1,8 +1,12 @@
 // Arquivo: assets/js/routes.js
 
 const API_BASE_URL = "https://localhost:7124/api";
+const API_AUTHENTICATION_BASE_URL = "https://localhost:7123/api";
 
 const API_ROUTES = {
+
+    // AUTHENTICATIONS
+    AUTHENTICATIONS_ASYNC: `${API_AUTHENTICATION_BASE_URL}/authentications/async`,
 
     // Foods
     FOODS_ASYNC: `${API_BASE_URL}/foods/async`,
