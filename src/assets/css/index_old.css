@@ -5,7 +5,7 @@
     body {
       margin: 0;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(to right, #252525, #bdbdbd);
+      background: linear-gradient(to right, #4d4d4d, #c4c4c4);
       height: 100vh;
       display: flex;
       align-items: center;
