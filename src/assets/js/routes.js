@@ -5,8 +5,18 @@ const API_AUTHENTICATION_BASE_URL = "https://localhost:7123/api";
 
 const API_ROUTES = {
 
+<<<<<<< HEAD
     // AUTHENTICATIONS
     AUTHENTICATIONS_ASYNC: `${API_AUTHENTICATION_BASE_URL}/authentications/async`,
+=======
+    // Authentication - Async (Polling direto)
+    AUTHENTICATION_ASYNC: `${API_BASE_URL}/authentications/async`,
+    AUTHENTICATION_GETBYID_ASYNC: (id) => `${API_BASE_URL}/authentications/async/${id}`,
+
+    // Authentication - Event Driven
+    AUTHENTICATION_EVENT_CREATE: `${API_BASE_URL}/authentications/async/event/create`,
+    AUTHENTICATION_EVENT_RESULT: (messagingId) => `${API_BASE_URL}/authentications/async/event/result/${messagingId}`,
+>>>>>>> e781e1d8d4826fa7a2818727dadeb87982e0881f
 
     // Foods
     FOODS_ASYNC: `${API_BASE_URL}/foods/async`,
